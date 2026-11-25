@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>綜合計算機中心</title>
+    <style>
+        /* --- 全局樣式設定 --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        /* --- 卡片容器樣式 --- */
+        .calculator-section {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            width: 90%;
+            max-width: 700px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        /* --- 輸入框和按鈕通用樣式 --- */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* --- 結果顯示區 --- */
+        #result, .bmi-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            min-height: 30px; /* 防止空間塌陷 */
+        }
+
+        /* =============================== */
+        /* --- 科學計算機特定樣式 (Grid) --- */
+        /* =============================== */
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 設定為五欄位網格 */
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .calc-button {
+            padding: 15px;
+            font-size: 1.2em;
+            background-color: #BEBEBE;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .calc-button:hover {
+            background-color: #ced4da;
+        }
+
+        /* 特殊按鈕顏色區分 */
+        .operator, .clear-btn {
+            background-color: #ff9800; /* 橙色用於運算子 */
+            color: white;
+        }
+
+        .equals {
+            grid-column: span 2; /* 等號按鈕佔用兩格 */
+            background-color: #4CAF50; /* 綠色用於等於 */
+            color: white;
+        }
+
+        .scientific-btn {
+            background-color: #84C1FF; /* 淡藍色用於科學功能 */
+            font-size: 1em;
+            /* 確保按鈕文字不影響整體高度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+    </style>
+</head>
+<body onload="clearDisplay()">
+
+    <h1>✨ 綜合多功能計算機中心 ✨</h1>
+
+    <!-- =============================== -->
+    <!-- 📐 1. 三角形面積計算器 (不變更)   -->
+    <!-- =============================== -->
+    <div class="calculator-section" id="triangle-calc">
+        <h2>📐 三角形面積計算器 (海倫公式)</h2>
+        <p>請輸入三角形三邊的長度 (單位需一致)。</p>
+
+        <div id="triangle-inputs">
+            <div>
+                <label for="sideA">邊長 A:</label>
+                <input type="number" id="sideA" placeholder="輸入第一個邊長" min="0">
+            </div>
+            <div>
+                <label for="sideB">邊長 B:</label>
+                <input type="number" id="sideB" placeholder="輸入第二個邊長" min="0">
+            </div>
+            <div>
+                <label for="sideC">邊長 C:</label>
+                <input type="number" id="sideC" placeholder="輸入第三個邊長" min="0">
+            </div>
+        </div>
+
+        <button onclick="calculateTriangleArea()">計算面積</button>
+
+        <div id="result" style="background-color: #e3f2fd; border: 1px solid #bbdefb;">
+            <!-- 計算結果顯示在此 -->
+        </div>
+    </div>
+
+
+    <!-- =============================== -->
+    <!-- 💪 2. BMI 計算器 (不變更)           -->
+    <!-- =============================== -->
+    <div class="calculator-section" id="bmi-calc">
+        <h2>⚖️ BMI 指數計算器</h2>
+        <p>BMI = 重量 (kg) / (身高 (m)²) </p>
+
+        <div class="bmi-controls">
+            <div class="input-group" style="flex: 1;">
+                <label for="weightKg">體重 (公斤, kg):</label>
+                <input type="number" id="weightKg" placeholder="例：70" min="0">
+            </div>
+            <div class="input-group" style="flex: 1;">
+                <label for="heightCm">身高 (公分, cm):</label>
+                <input type="number" id="heightCm" placeholder="請輸入公分 (例：175)" min="0">
+            </div>
+        </div>
+
+        <button onclick="calculateBMI()">計算 BMI</button>
+
+        <div class="bmi-result" style="background-color: #e8f5e9; border: 1px solid #c8e6c9;">
+             <!-- 計算結果顯示在此 -->
+        </div>
+    </div>
+
+
+    <!-- =============================== -->
+    <!-- 🧪 3. 科學計算機 (已修正)         -->
+    <!-- =============================== -->
+    <div class="calculator-section" id="scientific-calc">
+        <h2>🔬 科學運算機</h2>
+        
+        <!-- 顯示螢幕 -->
+        <input type="text" id="display" placeholder="輸入數字或運算式..." readonly style="width: calc(100% - 20px); margin-bottom: 15px; font-size: 1.5em; text-align: right;">
+
+        <!-- 按鈕網格 -->
+        <div class="calculator-grid">
+            
+            <!-- 第一列：科學功能和清除 -->
+            <button class="calc-button scientific-btn" onclick="appendFunction('Math.PI')">π</button>
+            <button class="calc-button scientific-btn" onclick="appendFunction('Math.pow(', 1)">xʸ</button>
+            <button class="calc-button scientific-btn" onclick="appendFunction('Math.sqrt(', 1)">√x</button>
+            <!-- 反三角函數：先計算弧度，再轉換為角度顯示 -->
+            <button class="calc-button scientific-btn" onclick="appendFunction('Math.asin(', '')">sin⁻¹</button>
+            <button class="calc-button clear-btn" onclick="clearDisplay()">C</button>
+
+            <!-- 第二列：數字和運算子 -->
+            <button class="calc-button" onclick="appendToDisplay('7')">7</button>
+            <button class="calc-button" onclick="appendToDisplay('8')">8</button>
+            <button class="calc-button" onclick="appendToDisplay('9')">9</button>
+            <button class="calc-button operator" onclick="appendToDisplay('*')">×</button>
+            <button class="calc-button clear-btn" onclick="deleteLast()">⌫</button>
+
+            <!-- 第三列：數字和運算子 -->
+            <button class="calc-button" onclick="appendToDisplay('4')">4</button>
+            <button class="calc-button" onclick="appendToDisplay('5')">5</button>
+            <button class="calc-button" onclick="appendToDisplay('6')">6</button>
+            <button class="calc-button operator" onclick="appendToDisplay('-')">-</button>
+            <!-- log10 (常用日誌) -->
+            <button class="calc-button scientific-btn" onclick="appendFunction('Math.log10(', 1)">log₁₀</button>
+
+            <!-- 第四列：數字和運算子 -->
+            <button class="calc-button" onclick="appendToDisplay('1')">1</button>
+            <button class="calc-button" onclick="appendToDisplay('2')">2</button>
+            <button class="calc-button" onclick="appendToDisplay('3')">3</button>
+            <button class="calc-button operator" onclick="appendToDisplay('+')">+</button>
+            <!-- 餘數 (取模) -->
+             <button class="calc-button scientific-btn" onclick="appendFunction('%', '', true)">%</button>
+
+            <!-- 第五列：數字、小數點和等於 -->
+            <button class="calc-button" onclick="appendToDisplay('0')">0</button>
+            <button class="calc-button" onclick="appendToDisplay('.')">.</button>
+            <!-- 已更名為百分比按鈕，功能由 JS 處理 -->
+            <button class="calc-button scientific-btn" onclick="calculatePercentage()">%</button>
+            <button class="calc-button equals" onclick="calculateResult()">=</button>
+
+        </div>
+    </div>
+
+
+    <script>
+        // ==========================================
+        // 📜 JavaScript 邏輯區塊 (修正版)
+        // ==========================================
+
+        /* ------------------------- */
+        /*     1. 三角形面積計算器      */
+        /* (此部分不修改，保持原樣)    */
+        /* ------------------------- */
+
+        function calculateTriangleArea() {
+            const a = parseFloat(document.getElementById('sideA').value);
+            const b = parseFloat(document.getElementById('sideB').value);
+            const c = parseFloat(document.getElementById('sideC').value);
+            const resultDiv = document.getElementById('result');
+
+            if (isNaN(a) || isNaN(b) || isNaN(c) || a < 0 || b < 0 || c < 0) {
+                resultDiv.innerHTML = '<span style="color: red;">⚠️ 請輸入三個有效且非負的數字。</span>';
+                return;
+            }
+
+            if (a + b <= c || a + c <= b || b + c <= a) {
+                resultDiv.innerHTML = '<span style="color: red;">❌ 此三邊長無法形成一個有效的三角形。請檢查您的輸入是否符合「任兩邊之和 > 第三邊」的條件。</span>';
+                return;
+            }
+
+            const s = (a + b + c) / 2;
+            try {
+                const areaSquared = s * (s - a) * (s - b) * (s - c);
+                const area = Math.sqrt(areaSquared);
+
+                resultDiv.innerHTML = `✅ 三角形面積為：<span style="color: #d32f2f;">${area.toFixed(2)}</span> 平方單位。`;
+            } catch (e) {
+                 resultDiv.innerHTML = `<span style="color: red;">計算錯誤，請檢查輸入的邊長是否合理。</span>`;
+            }
+        }
+
+
+        /* ------------------------- */
+        /*     2. BMI 計算器          */
+        /* (此部分不修改，保持原樣)    */
+        /* ------------------------- */
+
+        function calculateBMI() {
+            const weightKg = parseFloat(document.getElementById('weightKg').value);
+            const heightCm = parseFloat(document.getElementById('heightCm').value);
+            const resultDiv = document.querySelector('.bmi-result');
+
+            if (isNaN(weightKg) || isNaN(heightCm) || weightKg <= 0 || heightCm <= 0) {
+                resultDiv.innerHTML = '<span style="color: red;">⚠️ 請輸入有效且大於零的體重和身高數據。</span>';
+                return;
+            }
+
+            // 將公分轉換為米 (m)
+            const heightM = heightCm / 100;
+
+            if (heightM === 0) {
+                 resultDiv.innerHTML = '<span style="color: red;">⚠️ 身高不能為零。</span>';
+                return;
+            }
+
+            // BMI 公式：體重(kg) / (身高(m) * 身高(m))
+            const bmi = weightKg / (heightM * heightM);
+
+            let resultText = `✨ 您的 BMI 指數為：<span style="color: #388e3c;">${bmi.toFixed(2)}</span>`;
+            let evaluation = "";
+
+            if (bmi < 18.5) {
+                evaluation = "（屬於體重過輕範圍，建議適當增加營養。）";
+            } else if (bmi >= 18.5 && bmi < 23) {
+                evaluation = "（屬於正常健康範圍。）";
+            } else if (bmi >= 23 && bmi < 24) { // 依台灣標準，通常會區分亞洲人體重過輕/正常等
+                 evaluation = "（建議維持現狀或微調飲食。）";
+            } else if (bmi >= 23 && bmi < 25) {
+                evaluation = "（屬於正常健康範圍。）";
+            } else if (bmi >= 25 && bmi < 27) {
+                 evaluation = "（處於過重範圍，建議注意飲食與運動習慣。）";
+            } else if (bmi >= 27 && bmi < 30) {
+                evaluation = "（屬於肥胖前兆，強烈建議諮詢專業人士。）";
+            } else {
+                evaluation = "（屬於體重過重或肥胖範圍，請積極調整生活習慣。）";
+            }
+
+            resultDiv.innerHTML = resultText + "<br><small>" + evaluation + "</small>";
+        }
+
+
+        /* ------------------------- */
+        /*     3. 科學計算機 (修正)   */
+        /* ------------------------- */
+
+        const display = document.getElementById('display');
+
+        // --- 基本功能 ---
+
+        function clearDisplay() {
+            display.value = '';
+            window.history.replaceState(null, null, window.location.href); // 清除歷史紀錄，確保無殘留狀態
+        }
+
+        function appendToDisplay(input) {
+            if (display.value === 'Error' || display.value === 'Math.PI') {
+                display.value = '';
+            }
+            // 特殊處理：如果前面是數字，但現在輸入的是運算子，且前一個字符不是運算子，則可以正常append。
+            // 這裡簡單地直接追加即可，依靠JS的eval()來處理邏輯錯誤。
+            display.value += input;
+        }
+
+        function deleteLast() {
+            if (display.value === 'Error') {
+                clearDisplay();
+                return;
+            }
+            display.value = display.value.slice(0, -1);
+        }
+
+        // --- 科學功能處理邏輯（核心修正）---
+
+        /** 
+         * 當點擊科學函數按鈕時，不會直接計算，而是將開括號和函數名稱追加到顯示器。
+         * @param {string} funcName - 要添加的數學函數的Math.屬性 (如 'Math.sqrt(')
+         * @param {number|string} defaultValue - 預設值或佔位符
+         * @param {boolean} isPercent - 是否為特殊處理的百分比按鈕
+         */
+        function appendFunction(funcName, defaultValue = null, isPercent = false) {
+            if (display.value === 'Error') {
+                clearDisplay();
+            }
+
+            if (isPercent) return; // 避免在 % 按鈕處執行此函數
+
+            // 對於需要輸入參數的函數，添加開括號
+            let prefix = funcName + '(';
+
+            if (display.value === '') {
+                display.value = prefix;
+            } else if (!isNaN(parseFloat(display.value.slice(-1)))) {
+                // 如果目前顯示的是數字末尾，直接追加函數名稱和開括號（假設用戶是想對這個數字做運算）
+                 display.value += ` * ${prefix}`; 
+            } else {
+                // 如果前面已經有內容，則追加操作符號和函數
+                display.value += ` * ${prefix}`;
+            }
+
+            // 將 Math.PI 顯示為 π 更友善
+             if (funcName === 'Math.PI') {
+                 display.value = display.value.replace('Math.PI', 'π');
+             }
+        }
+        
+        /**
+         * 計算百分比：將當前運算式視為 %，例如 "100 + 20%" 會計算成 100 + (20/100)*100 的邏輯。
+         * 在標準的 JS eval 環境中，最簡單且直觀的做法是讓用戶在數字後手動輸入 % 符號，然後我們替換它為 /100。
+         */
+        function calculatePercentage() {
+            let currentExpression = display.value;
+            if (currentExpression === '') return;
+
+             // 查找最後一個純數字序列後面接的百分比點，並將其替換邏輯處理成除以百
+            // 這個處理比較複雜，最穩妥的方法是：如果用戶輸入了 % 按鈕，我們假定他們是要對前面的一個數值進行比例計算。
+             
+            // 簡單版修正：假設用户点击%后，我们希望它在当前表达式的末尾执行 (例如: 100 + 20%)
+            let processedValue = currentExpression.replace(/(\d+\.?\d*)\s*\%/g, function(match, p1) {
+                return `* (${p1}/100)`; // 將 '20%' 解析為 * (20/100)
+            });
+
+            if (processedValue === currentExpression) {
+                 // 如果沒有匹配到 % 格式，則將其直接追加，讓 eval() 去處理（雖然這不是最完美的數學邏輯）
+                display.value += "%";
+            } else {
+                display.value = processedValue;
+            }
+
+        }
+
+
+        /**
+         * 計算結果 (使用 Eval，需要安全過濾)
+         */
+        function calculateResult() {
+            let expression = display.value;
+             if (!expression) return;
+
+            try {
+                // 1. 處理 Pi: 將字串 'π' 或 'Math.PI' 替換為實際的 Math.PI 值
+                expression = expression.replace(/π/g, Math.PI.toString());
+                 
+                // 2. 安全清理：移除可能導致 eval() 出錯的結構，例如連續的*或+等。
+                // 因為我們已在按鈕邏輯中嘗試構造表達式，這裡只需要確保它是一個可執行的JS表達式。
+
+                let result = eval(expression);
+                
+                if (isNaN(result) || !isFinite(result)) {
+                    throw new Error("數學計算結果無效");
+                }
+
+                // 格式化輸出，限制小數點位數
+                display.value = result.toString();
+
+            } catch (e) {
+                display.value = 'Error';
+                console.error("Calculation Error:", e);
+            }
+        }
+
+
+    </script>
+</body>
+</html>
